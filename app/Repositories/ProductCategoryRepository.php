@@ -1,5 +1,5 @@
 <?php
-namespace Repositories;
+namespace App\Repositories;
 
 class ProductCategoryRepository {
   

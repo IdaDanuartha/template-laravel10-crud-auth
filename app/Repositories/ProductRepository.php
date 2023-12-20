@@ -1,6 +1,45 @@
 <?php
-namespace Repositories;
+namespace App\Repositories;
 
-class ProductRepository {
+use App\Models\Product;
+
+class ProductRepository implements RepositoryInterface {
+  protected $product;
+
+  public function ___construct(Product $product)
+  {
+    $this->product = $product;
+  }
+
+  public function getAll(): Product
+  {
+    return $this->product->get();
+  }
+
+  public function getById($id): Product
+  {
+    return $this->product->find($id);
+  }
+
+  public function store($data): Product
+  {
+    $this->product->save($data);
+    return $this->product->fresh();
+  }
   
+  public function update($id, $newData): Product
+  {
+    $product = $this->product->find($id);
+
+    $product->update($newData);
+    return $product;
+  }
+
+  public function delete($id): Product
+  {
+    $product = $this->product->find($id);
+
+    $product->delete();
+    return $product;
+  }
 }
