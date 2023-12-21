@@ -55,6 +55,40 @@
   </head>
 
   <body>
+    @if (session()->has('success'))
+      <div
+        class="bs-toast toast toast-placement-ex m-2 fade bg-success top-0 end-0 show"
+        role="alert"
+        aria-live="assertive"
+        data-bs-delay="2000"
+        aria-atomic="true">
+        <div class="toast-header">
+          <i class="bx bx-bell me-2"></i>
+          <div class="me-auto fw-medium">Success</div>          
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {{ session('success') }}
+        </div>
+      </div>  
+    @elseif(session()->has('error'))
+      <div
+        class="bs-toast toast toast-placement-ex m-2 fade bg-danger top-0 end-0 show"
+        role="alert"
+        aria-live="assertive"
+        data-bs-delay="2000"
+        aria-atomic="true">
+        <div class="toast-header">
+          <i class="bx bx-bell me-2"></i>
+          <div class="me-auto fw-medium">Error</div>          
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {{ session('error') }}
+        </div>
+      </div>
+    @endif
+
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">

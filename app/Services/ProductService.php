@@ -13,27 +13,27 @@ class ProductService {
     $this->productRepository = $productRepository;
   }
 
-  public function getAllProducts(): Collection
+  public function findAll(): Collection
   {
-    return $this->productRepository->getAll();
+    return $this->productRepository->findAll();
   }
 
-  public function getProductById($id): Product
+  public function findById($id): Product
   {
-    return $this->productRepository->getById($id);
+    return $this->productRepository->findById($id);
   }
 
-  public function storeProduct($data): Product
+  public function store($data): Product
   {
     return $this->productRepository->store($data);
   }
   
-  public function updateProduct($id, $newData): Product
+  public function update($id, $newData): Product
   {
     return $this->productRepository->update($id, $newData);
   }
 
-  public function deleteProduct($id): Product
+  public function delete($id): Product
   {
     return $this->productRepository->delete($id);    
   }

@@ -13,12 +13,12 @@ class ProductRepository implements RepositoryInterface {
     $this->product = $product;
   }
 
-  public function getAll(): Collection
+  public function findAll(): Collection
   {
     return $this->product->with(['product_category', 'product_images'])->get();
   }
 
-  public function getById($id): Product
+  public function findById($id): Product
   {
     return $this->product->find($id);
   }

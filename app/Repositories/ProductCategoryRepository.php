@@ -12,12 +12,12 @@ class ProductCategoryRepository {
     $this->productCategory = $productCategory;
   }
 
-  public function getAll(): Collection
+  public function findAll(): Collection
   {
     return $this->productCategory->get();
   }
 
-  public function getById($id): ProductCategory
+  public function findById($id): ProductCategory
   {
     return $this->productCategory->find($id);
   }

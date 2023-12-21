@@ -51,7 +51,8 @@
 
 <div class="modal fade" id="createProductModal" data-bs-backdrop="static" tabindex="-1">
   <div class="modal-dialog modal-lg">
-    <form class="modal-content">
+    <form class="modal-content" action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
+      @csrf
       <div class="modal-header">
         <h5 class="modal-title" id="createProductModalTitle">Create New Product</h5>
         <button
@@ -73,11 +74,14 @@
               name="thumbnail_img"
               class="form-control create-product-input"
               />
+            @error('thumbnail_img')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="row">
           <div class="col mb-3">
-            <label for="image" class="form-label">Product Images (Uplaod multiple images)</label>
+            <label for="images" class="form-label">Product Images (Upload multiple images)</label>
             <div class="row multiple-preview-images mb-3">
               <div class="col-3">
                 <img src="{{ asset('assets/img/upload-image.jpg') }}" class="border" width="100%" alt="">
@@ -85,11 +89,14 @@
             </div>
             <input
               type="file"
-              id="image"
-              name="image"
+              id="images"
+              name="images"
               class="form-control create-product-multiple-images"
               multiple
               />
+            @error('images')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="row">
@@ -100,17 +107,29 @@
               id="title"
               name="title"
               class="form-control"
+              value="{{ old('title') }}"
               placeholder="Enter title product" />
+            @error('title')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="row">
           <div class="col mb-3">
             <label for="product_category_id" class="form-label">Category</label>
             <select class="product-category-select2 form-control" name="product_category_id">
+              <option value="">Select Category</option>
               @foreach ($categories as $item)
-                <option value="{{$item->id }}">{{ $item->name }}</option>
+                @if (old('product_category_id') === $item->id)
+                  <option value="{{$item->id }}" selected>{{ $item->name }}</option>
+                @else
+                  <option value="{{$item->id }}">{{ $item->name }}</option>  
+                @endif
               @endforeach
             </select>
+            @error('product_category_id')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="row mb-3">
@@ -121,7 +140,11 @@
               id="price"
               name="price"
               class="form-control"
+              value="{{ old('price') }}"
               placeholder="Enter price product" />
+            @error('price')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
           <div class="col">
             <label for="stock" class="form-label">Stock</label>
@@ -130,13 +153,20 @@
               id="stock"
               name="stock"
               class="form-control"
+              value="{{ old('stock') }}"
               placeholder="Enter stock product" />
+            @error('stock')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
         <div class="row">
           <div class="col mb-3">
             <label for="create_description" class="form-label">Description</label>
-            <textarea name="description" id="create_description" class="rte-editor"></textarea>
+            <textarea name="description" id="create_description" class="rte-editor">{{ old('description') }}</textarea>
+            @error('description')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
           </div>
         </div>
       </div>
@@ -144,7 +174,7 @@
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
           Close
         </button>
-        <button type="button" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
       </div>
     </form>
   </div>

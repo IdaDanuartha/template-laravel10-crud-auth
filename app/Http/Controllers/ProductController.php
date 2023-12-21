@@ -22,8 +22,8 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = $this->productService->getAllProducts();
-        $categories = $this->productCategoryService->getAllCategories();
+        $products = $this->productService->findAll();
+        $categories = $this->productCategoryService->findAll();
         
         return view('products.index', compact('products', 'categories'));
     }
@@ -35,7 +35,14 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        //
+        try {
+            // dd($request->all());
+            $this->productService->store($request->except(['images']));
+
+            return redirect()->route('products.index')->with('success', 'Product created successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', $e->getMessage());
+        }
     }
 
     public function show(Product $product)
