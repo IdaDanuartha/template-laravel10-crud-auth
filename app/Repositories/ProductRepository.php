@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use App\Interfaces\RepositoryInterface;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -14,7 +15,7 @@ class ProductRepository implements RepositoryInterface {
 
   public function getAll(): Collection
   {
-    return $this->product::with('product_category')->get();
+    return $this->product->with(['product_category', 'product_images'])->get();
   }
 
   public function getById($id): Product

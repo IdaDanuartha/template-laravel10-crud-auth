@@ -77,7 +77,7 @@
         </div>
         <div class="row">
           <div class="col mb-3">
-            <label for="image" class="form-label">Product Images</label>
+            <label for="image" class="form-label">Product Images (Uplaod multiple images)</label>
             <div class="row multiple-preview-images mb-3">
               <div class="col-3">
                 <img src="{{ asset('assets/img/upload-image.jpg') }}" class="border" width="100%" alt="">
@@ -107,8 +107,9 @@
           <div class="col mb-3">
             <label for="product_category_id" class="form-label">Category</label>
             <select class="product-category-select2 form-control" name="product_category_id">
-              <option value="AL">Alabama</option>                
-              <option value="WY">Wyoming</option>
+              @foreach ($categories as $item)
+                <option value="{{$item->id }}">{{ $item->name }}</option>
+              @endforeach
             </select>
           </div>
         </div>
