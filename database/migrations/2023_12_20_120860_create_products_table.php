@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->text('description');
             $table->integer('price');
+            $table->integer('stock');
             $table->string('thumbnail_img');
             $table->timestamps();
 

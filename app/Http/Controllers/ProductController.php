@@ -20,7 +20,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = $this->productService->getAllProducts();
-        return view('layouts.main', compact('products'));
+        return view('products.index', compact('products'));
     }
 
     public function create()

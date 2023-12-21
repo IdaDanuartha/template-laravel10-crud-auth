@@ -14,7 +14,7 @@ class ProductRepository implements RepositoryInterface {
 
   public function getAll(): Collection
   {
-    return $this->product->get();
+    return $this->product::with('product_category')->get();
   }
 
   public function getById($id): Product
