@@ -63,6 +63,37 @@
       <div class="modal-body">
         <div class="row">
           <div class="col mb-3">
+            <label for="thumbnail_img" class="form-label">Thumbnail</label>
+            <div class="d-block mb-3">
+              <img src="{{ asset('assets/img/upload-image.jpg') }}" class="create-product-preview-img border" width="300" alt="">
+            </div>
+            <input
+              type="file"
+              id="thumbnail_img"
+              name="thumbnail_img"
+              class="form-control create-product-input"
+              />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="image" class="form-label">Product Images</label>
+            <div class="row multiple-preview-images mb-3">
+              <div class="col-3">
+                <img src="{{ asset('assets/img/upload-image.jpg') }}" class="border" width="100%" alt="">
+              </div>
+            </div>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              class="form-control create-product-multiple-images"
+              multiple
+              />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
             <label for="title" class="form-label">Title Product</label>
             <input
               type="text"
@@ -81,8 +112,8 @@
             </select>
           </div>
         </div>
-        <div class="row">
-          <div class="col mb-3">
+        <div class="row mb-3">
+          <div class="col">
             <label for="price" class="form-label">Price</label>
             <input
               type="number"
@@ -91,9 +122,7 @@
               class="form-control"
               placeholder="Enter price product" />
           </div>
-        </div>
-        <div class="row">
-          <div class="col mb-3">
+          <div class="col">
             <label for="stock" class="form-label">Stock</label>
             <input
               type="number"
@@ -130,5 +159,9 @@
         dropdownParent: $("#createProductModal")
       });
     });
+
+    previewImg("create-product-input", "create-product-preview-img")
+    previewMultipleImages("create-product-multiple-images", "multiple-preview-images")
+    
   </script>
 @endpush

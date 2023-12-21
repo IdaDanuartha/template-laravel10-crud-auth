@@ -144,6 +144,29 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+    <script>
+      const previewImg = (input_img, preview_img) => {      
+        $(`.${input_img}`).change(function() {    
+          $(`.${preview_img}`).attr("src", URL.createObjectURL($(`.${input_img}`)[0].files[0]))
+        })
+      }
+
+      const previewMultipleImages = (input_img, preview_imgs) => {              
+        $(`.${input_img}`).change(function() {              
+          console.log(this.files.length)
+          $(`.${preview_imgs}`).html('')
+          for(let i = 0; i < this.files.length; i++) {
+            $(`.${preview_imgs}`).append(`
+              <div class="col-3">
+                <img src="${URL.createObjectURL($(`.${input_img}`)[0].files[i])}" class="border" width="100%" alt="">
+              </div>
+            `)            
+          }
+        })
+      }
+    </script>
+
     @stack('js')
+
   </body>
 </html>
