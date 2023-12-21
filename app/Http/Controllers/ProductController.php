@@ -35,9 +35,8 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        try {
-            // dd($request->all());
-            $this->productService->store($request->except(['images']));
+        try {                        
+            $this->productService->store($request->except(['images']), $request->only('images'));
 
             return redirect()->route('products.index')->with('success', 'Product created successfully');
         } catch (\Exception $e) {
@@ -60,8 +59,13 @@ class ProductController extends Controller
         //
     }
 
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        try {
+            $this->productService->delete($id);
+            return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', $e->getMessage());
+        }
     }
 }

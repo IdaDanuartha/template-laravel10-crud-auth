@@ -25,7 +25,7 @@
               <span class="fw-medium">{{ $item->title }}</span>
             </td>
             <td>{{ $item->product_category->name }}</td>
-            <td>{{ $item->price }}</td>
+            <td>Rp. @rupiah($item->price)</td>
             <td>{{ $item->stock }}</td>            
             <td>
               <div class="dropdown">
@@ -33,10 +33,14 @@
                   <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
                 <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#"
+                    ><i class="bx bx-file me-1"></i> Detail</a
+                  >
                   <a class="dropdown-item" href="{{ route('products.edit', $item->id) }}"
                     ><i class="bx bx-edit-alt me-1"></i> Edit</a
                   >
-                  <a class="dropdown-item" href="#"
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                  data-bs-target="#deleteProductModal"
                     ><i class="bx bx-trash me-1"></i> Delete</a
                   >
                 </div>
@@ -90,7 +94,7 @@
             <input
               type="file"
               id="images"
-              name="images"
+              name="images[]"
               class="form-control create-product-multiple-images"
               multiple
               />
@@ -177,6 +181,33 @@
         <button type="submit" class="btn btn-primary">Save</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteProductModalTitle">Delete Product</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">  
+        <p>Do you really want to delete this data? This process cannot be
+          undone.</p>      
+      </div>
+      <form action="{{ route('products.destroy', 5) }}" method="POST" class="modal-footer d-flex justify-content-center">
+        @csrf
+        @method("DELETE")
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Delete</button>
+      </form>
+    </div>
   </div>
 </div>
 @endsection

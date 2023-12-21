@@ -15,18 +15,18 @@ class ProductRepository implements RepositoryInterface {
 
   public function findAll(): Collection
   {
-    return $this->product->with(['product_category', 'product_images'])->get();
+    return $this->product->with(['product_category'])->get();
   }
 
   public function findById($id): Product
   {
-    return $this->product->find($id);
+    return $this->product->where('id', $id)->with(['product_category', 'product_images'])->first();
   }
 
-  public function store($data): Product
-  {
-    $this->product->save($data);
-    return $this->product->fresh();
+  public function store(array $data): Product
+  {        
+    $product = $this->product->create($data);
+    return $product;
   }
   
   public function update($id, $newData): Product
