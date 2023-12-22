@@ -44,9 +44,15 @@ class ProductController extends Controller
         return $this->productService->findById($id);
     }
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, $id)
     {
-        //
+        try {                        
+            $this->productService->update($id, $request->except(['images']), $request->only('images'));
+
+            return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', $e->getMessage());
+        }
     }
 
     public function destroy($id)

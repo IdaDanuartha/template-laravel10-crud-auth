@@ -13,11 +13,16 @@ use Illuminate\Support\Facades\Log;
 class ProductService {
   protected $productRepository;
   protected $productImageService;
+  protected $productCategoryService;
 
-  public function __construct(ProductRepository $productRepository, ProductImageService $productImageService)
+  public function __construct(
+    ProductRepository $productRepository, 
+    ProductImageService $productImageService, 
+    ProductCategoryService $productCategoryService)
   {
     $this->productRepository = $productRepository;
     $this->productImageService = $productImageService;
+    $this->productCategoryService = $productCategoryService;
   }
 
   public function findAll(): Collection
@@ -28,7 +33,8 @@ class ProductService {
   public function findById($id): JsonResponse
   {
     return response()->json([
-      "data" => $this->productRepository->findById($id)
+      "products" => $this->productRepository->findById($id),
+      "categories" => $this->productCategoryService->findAll(),
     ]);
   }
 
@@ -57,9 +63,37 @@ class ProductService {
     }    
   }
   
-  public function update($id, $newData): Product
+  public function update($id, array $data, array $product_images): Product
   {
-    return $this->productRepository->update($id, $newData);
+    DB::beginTransaction(); 
+    try {
+      $product = $this->productRepository->findById($id); 
+      
+      if ($data["thumbnail_img"]) { 
+        $path = "uploads/products/thumbnails/" + $product->thumbnail_img;      
+
+        if(File::exists($path) ) {
+          File::delete($path);
+        }
+
+        $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
+        $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
+        $data['thumbnail_img'] = $thumbnail_img_name;
+      }     
+
+      $product = $this->productRepository->update($id, $data);
+      $this->productImageService->update($product->id, $product_images["images"]);
+
+      DB::commit();
+
+      return $product;
+
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
+      
+      throw $e;
+    }    
   }
 
   public function delete($id): Product

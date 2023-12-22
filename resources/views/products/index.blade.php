@@ -273,6 +273,137 @@
   </div>
 </div>
 
+{{-- Edit Product --}}
+<div class="modal fade" id="editProductModal" data-bs-backdrop="static" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <form class="modal-content" action="" id="edit_product_form" method="post" enctype="multipart/form-data">
+      @csrf
+      @method("PUT")
+      <input type="hidden" class="image_deleted">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProductModalTitle">Edit Product</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit_thumbnail" class="form-label">Thumbnail</label>
+            <label for="edit_thumbnail" class="d-block mb-3">
+              <img id="edit_thumbnail" src="{{ asset('assets/img/upload-image.jpg') }}" class="create-product-preview-img border" width="300" alt="">
+            </label>
+            <input
+              type="file"              
+              name="thumbnail_img"
+              class="form-control create-product-input"
+              />
+            @error('thumbnail_img')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit_product_images" class="form-label">Product Images (Upload multiple images)</label>
+            <div class="row edit-multiple-preview-images mb-3">
+              <label for="edit_product_images" class="col-3">
+                <img src="{{ asset('assets/img/upload-image.jpg') }}" class="border" width="100%" alt="">
+              </label>
+            </div>
+            <label for="edit_product_images" class="form-label">Preview New Images :</label>
+            <div class="row edit-multiple-preview-images-new mb-3">
+              <label for="edit_product_images" class="col-3">
+                <img src="{{ asset('assets/img/upload-image.jpg') }}" class="border" width="100%" alt="">
+              </label>
+            </div>
+            <input
+              type="file"              
+              name="images[]"
+              id="edit_product_images"
+              class="form-control edit-product-multiple-images"
+              multiple
+              />
+            @error('images')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit_title" class="form-label">Title Product</label>
+            <input
+              type="text"
+              id="edit_title"
+              name="title"
+              class="form-control"
+              required
+              placeholder="Enter title product" />
+            @error('title')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="product_category_id" class="form-label">Category</label>
+            <select id="edit_category_product" required class="product-category-select2 form-control" name="product_category_id">              
+            </select>
+            @error('product_category_id')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <label for="edit_price" class="form-label">Price</label>
+            <input
+              type="number"
+              id="edit_price"
+              name="price"
+              class="form-control"
+              required
+              placeholder="Enter price product" />
+            @error('price')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+          <div class="col">
+            <label for="edit_stock" class="form-label">Stock</label>
+            <input
+              type="number"
+              id="edit_stock"
+              name="stock"
+              class="form-control"
+              required
+              placeholder="Enter stock product" />
+            @error('stock')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+        <div class="row">
+          <div class="col mb-3">
+            <label for="edit_description" class="form-label">Description</label>
+            <textarea required name="description" id="edit_description" class="rte-editor"></textarea>
+            @error('description')
+              <div class="text-danger mt-1">{{ $message }}</div>
+            @enderror
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 {{-- Delete Product --}}
 <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -305,56 +436,95 @@
 @push('js')
   <script>
     let editor1 = new RichTextEditor("#create_description");
+    let editor2 = new RichTextEditor("#edit_description");
     
     $(document).ready(function() {
       $('.product-category-select2').select2({
         dropdownParent: $("#createProductModal")
       });
 
-      // Get Achievement Data
       $(".detail-product-data").on("click", function() {          
-          $.ajax({
-              type: "GET",
-              url: `/admin/products/${$(this).closest('.table-body').find('.product_id').val()}`,              
-              dataType: "json",
-              success: function({data}){
-                console.log(data)
-                $("#detail-thumbnail").attr("src", `/uploads/products/thumbnails/${data.thumbnail_img}`)
-                $("#detail-title").val(data.title)
-                $("#detail-category-product").val(data.product_category.name)
-                $("#detail-price").val(rupiah(data.price))
-                $("#detail-stock").val(data.stock)
-                $("#detail-description").html($(data.description).text())
+        $.ajax({
+            type: "GET",
+            url: `/admin/products/${$(this).closest('.table-body').find('.product_id').val()}`,              
+            dataType: "json",
+            success: function({products}){
+              console.log(products)
+              $("#detail-thumbnail").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
+              $("#detail-title").val(products.title)
+              $("#detail-category-product").val(products.product_category.name)
+              $("#detail-price").val(rupiah(products.price))
+              $("#detail-stock").val(products.stock)
+              $("#detail-description").html($(products.description).text())
 
-                $("#detail-product-images").html('')
-                for(let i = 0; i < data.product_images.length; i++) {
-                  $("#detail-product-images").append(`
-                    <div class="col-3 mb-4">
-                      <img src="/uploads/products/images/${data.product_images[i].image}" class="border" width="100%" alt="">
-                    </div>
-                  `)            
-                }
+              $("#detail-product-images").html('')
+              for(let i = 0; i < products.product_images.length; i++) {
+                $("#detail-product-images").append(`
+                  <div class="col-3 mb-4">
+                    <img src="/uploads/products/images/${products.product_images[i].image}" class="border" width="100%" alt="">
+                  </div>
+                `)            
               }
-          });
+            }
+        })
       })
 
-      // $(".edit-achievement-data").on("click", function() {          
-      //     $.ajax({
-      //         type: "POST",
-      //         url: '/admin/about/achievement/detail',
-      //         data: {
-      //           "achievement_id": $(this).closest('.table-body').find('.achievement_id').val(),
-      //         },
-      //         dataType: "json",
-      //         success: function(response){
-      //           $("#edit-achievement-form").attr("action", `/admin/about/achievement/${response.achievement.id}`)
-      //           $("#edit-achievement-img").attr("src", `/uploads/about/achievements/${response.achievement.achievement_img}`)
-      //           $("#edit-achievement-title-en").val(response.achievement.title_achievement_en)
-      //           $("#edit-achievement-title-id").val(response.achievement.title_achievement_id)
-      //           $("#edit-achievement-count").val(response.achievement.count)
-      //         }
-      //     });
-      // })
+      $(".edit-product-data").on("click", function() { 
+        const product_id = $(this).closest('.table-body').find('.product_id').val()     
+        $.ajax({
+          type: "GET",
+          url: `/admin/products/${product_id}`,
+          dataType: "json",
+          success: function({products, categories}){            
+            $("#edit_product_form").attr("action", `/admin/products/${product_id}`)
+            $("#edit_thumbnail").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
+            $("#edit_title").val(products.title)
+            // $("#edit_category_product").val(products.product_category.name)
+            $("#edit_price").val(products.price)
+            $("#edit_stock").val(products.stock)
+            editor2.setHTMLCode(products.description)
+            
+            categories.forEach(category => {
+              if(category.id == products.product_category.id) {
+                $("#edit_category_product").append(`
+                  <option value="${category.id}" selected>
+                      ${category.name}
+                  </option>
+              `)
+              } else {
+                $("#edit_category_product").append(`
+                  <option value="${category.id}">
+                      ${category.name}
+                  </option>
+              `)
+              }
+            });
+                            
+            $(".edit-multiple-preview-images").html('')
+            for(let i = 0; i < products.product_images.length; i++) {
+              $(".edit-multiple-preview-images").append(`
+                <div class="col-3 mb-4 position-relative">
+                  <i class="bx bx-x position-absolute text-dark fa-lg delete-img-icon" data-id="${products.product_images[i].id}" style="right: 15px; cursor: pointer;"></i>
+                  <img src="/uploads/products/images/${products.product_images[i].image}" class="border" width="100%" alt="">
+                </div>
+              `)            
+            }
+
+            $(".delete-img-icon").on('click', function() {
+              $(this).parent().remove()
+
+              let oldValue = $(".image_deleted").val()
+              let arr = oldValue === "" ? [] : oldValue.split(',');
+              arr.push($(this).data('id'));
+              let newValue = arr.join(',');
+
+              $(".image_deleted").val(newValue)
+
+              console.log($(".image_deleted").val())
+            })
+          }
+        })
+      })
 
       // $(".delete-achievement-data").on("click", function() {          
       //     $.ajax({
@@ -375,6 +545,7 @@
 
     previewImg("create-product-input", "create-product-preview-img")
     previewMultipleImages("create-product-multiple-images", "multiple-preview-images")
+    previewMultipleImages("edit-product-multiple-images", "edit-multiple-preview-images-new")
     
   </script>
 @endpush
