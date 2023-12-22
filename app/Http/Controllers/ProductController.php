@@ -28,11 +28,6 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories'));
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(StoreProductRequest $request)
     {
         try {                        
@@ -44,14 +39,9 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Product $product)
-    {
-        //
-    }
-
-    public function edit(UpdateProductRequest $product)
-    {
-        //
+    public function show($id)
+    {        
+        return $this->productService->findById($id);
     }
 
     public function update(Request $request, Product $product)

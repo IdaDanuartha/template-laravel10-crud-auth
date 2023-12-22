@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Repositories\ProductRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -24,9 +25,11 @@ class ProductService {
     return $this->productRepository->findAll();
   }
 
-  public function findById($id): Product
+  public function findById($id): JsonResponse
   {
-    return $this->productRepository->findById($id);
+    return response()->json([
+      "data" => $this->productRepository->findById($id)
+    ]);
   }
 
   public function store(array $data, array $product_images): Product

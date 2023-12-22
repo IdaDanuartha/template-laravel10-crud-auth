@@ -27,7 +27,7 @@
       href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
       rel="stylesheet" />
 
-    <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />    
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="/assets/vendor/css/core.css" class="template-customizer-core-css" />
@@ -37,9 +37,10 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="/assets/vendor/libs/apex-charts/apex-charts.css" />
-
+    
     {{-- JQuery --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <!-- Select 2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -153,8 +154,7 @@
     <!-- / Layout wrapper -->
 
     <!-- Core JS -->
-    <!-- build:js /assets/vendor/js/core.js -->
-    
+    <!-- build:js /assets/vendor/js/core.js -->    
     <script src="/assets/vendor/libs/popper/popper.js"></script>
     <script src="/assets/vendor/js/bootstrap.js"></script>
     <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
@@ -179,6 +179,13 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
     <script>
+      const rupiah = (number) => {
+        return new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR"
+        }).format(number);
+      }
+
       const previewImg = (input_img, preview_img) => {      
         $(`.${input_img}`).change(function() {    
           $(`.${preview_img}`).attr("src", URL.createObjectURL($(`.${input_img}`)[0].files[0]))
@@ -187,11 +194,10 @@
 
       const previewMultipleImages = (input_img, preview_imgs) => {              
         $(`.${input_img}`).change(function() {              
-          console.log(this.files.length)
           $(`.${preview_imgs}`).html('')
           for(let i = 0; i < this.files.length; i++) {
             $(`.${preview_imgs}`).append(`
-              <div class="col-3">
+              <div class="col-3 mb-4">
                 <img src="${URL.createObjectURL($(`.${input_img}`)[0].files[i])}" class="border" width="100%" alt="">
               </div>
             `)            
