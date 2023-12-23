@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="index.html" class="app-brand-link">
+        <a href="#" class="app-brand-link">
         <span class="app-brand-logo demo">
             <svg
             width="25"
@@ -50,7 +50,7 @@
             </g>
             </svg>
         </span>
-        <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span>
+        <span class="app-brand-text demo menu-text fw-bold ms-2 text-capitalize">Template</span>
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -62,10 +62,10 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
-        <li class="menu-item {{ Request::is('admin/dashboard*') ? 'active':'' }} open">
+        <li class="menu-item {{ Request::is('admin/dashboard*') ? 'active':'' }}">
             <a href="{{ route('dashboard.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Dashboards">Dashboards</div>
+                <div data-i18n="Dashboards">Dashboard</div>
             </a>
         </li>
         

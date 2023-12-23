@@ -42,7 +42,7 @@ class ProductController extends Controller
     public function show($id)
     {        
         return response()->json([
-            "products" => $this->productService->findById($id, ["product_category", "product_images"]),
+            "product" => $this->productService->findById($id, ["product_category", "product_images"]),
             "categories" => $this->productCategoryService->findAll()
         ]);
     }
@@ -58,13 +58,13 @@ class ProductController extends Controller
         }
     }
 
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $this->productService->delete($id);
-    //         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('products.index')->with('error', Failed to delete product);
-    //     }
-    // }
+    public function destroy($id)
+    {
+        try {
+            $this->productService->delete($id);
+            return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', 'Failed to delete product');
+        }
+    }
 }

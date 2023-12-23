@@ -272,7 +272,7 @@
         <div class="row">
           <div class="col mb-3">
             <label for="" class="form-label">Description</label>
-            <textarea class="form-control" id="detail-description" readonly rows="10" cols="30"></textarea>
+            <textarea id="detail_description" class="rte-editor"></textarea>
           </div>
         </div>
       </div>
@@ -429,7 +429,7 @@
         <p>Do you really want to delete this data? This process cannot be
           undone.</p>      
       </div>
-      <form action="{{ route('products.destroy', 5) }}" method="POST" class="modal-footer d-flex justify-content-center">
+      <form action="" method="POST" id="delete_product_form" class="modal-footer d-flex justify-content-center">
         @csrf
         @method("DELETE")
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -446,6 +446,7 @@
   <script>
     let editor1 = new RichTextEditor("#create_description");
     let editor2 = new RichTextEditor("#edit_description");
+    let editor3 = new RichTextEditor("#detail_description");
     
     $(document).ready(function() {
       $('.product-category-select2').select2({
@@ -457,19 +458,21 @@
             type: "GET",
             url: `/admin/products/${$(this).closest('.table-body').find('.product_id').val()}`,              
             dataType: "json",
-            success: function({products, categories}){
-              $("#detail-thumbnail").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
-              $("#detail-title").val(products.title)
-              $("#detail-category-product").val(products.product_category.name)
-              $("#detail-price").val(rupiah(products.price))
-              $("#detail-stock").val(products.stock)
-              $("#detail-description").html($(products.description).text())
+            success: function({product, categories}){
+              $("#detail-thumbnail").attr("src", `/uploads/products/thumbnails/${product.thumbnail_img}`)
+              $("#detail-title").val(product.title)
+              $("#detail-category-product").val(product.product_category.name)
+              $("#detail-price").val(rupiah(product.price))
+              $("#detail-stock").val(product.stock)
+
+              editor3.setReadOnly(true);    
+              editor3.setHTMLCode(product.description)          
 
               $("#detail-product-images").html('')
-              for(let i = 0; i < products.product_images.length; i++) {
+              for(let i = 0; i < product.product_images.length; i++) {
                 $("#detail-product-images").append(`
                   <div class="col-3 mb-4">
-                    <img src="/uploads/products/images/${products.product_images[i].image}" class="border" width="100%" alt="">
+                    <img src="/uploads/products/images/${product.product_images[i].image}" class="border" width="100%" alt="">
                   </div>
                 `)            
               }
@@ -483,17 +486,17 @@
           type: "GET",
           url: `/admin/products/${product_id}`,
           dataType: "json",
-          success: function({products, categories}){            
+          success: function({product, categories}){            
             $("#edit_product_form").attr("action", `/admin/products/${product_id}`)
-            $("#edit_thumbnail_img").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
-            $("#edit_product_id").val(products.id)
-            $("#edit_title").val(products.title)            
-            $("#edit_price").val(products.price)
-            $("#edit_stock").val(products.stock)
-            editor2.setHTMLCode(products.description)
+            $("#edit_thumbnail_img").attr("src", `/uploads/products/thumbnails/${product.thumbnail_img}`)
+            $("#edit_product_id").val(product.id)
+            $("#edit_title").val(product.title)            
+            $("#edit_price").val(product.price)
+            $("#edit_stock").val(product.stock)
+            editor2.setHTMLCode(product.description)
             
             categories.forEach(category => {
-              if(category.id == products.product_category.id) {
+              if(category.id == product.product_category.id) {
                 $("#edit_category_product").append(`
                   <option value="${category.id}" selected>
                       ${category.name}
@@ -509,11 +512,11 @@
             });
                             
             $(".edit-multiple-preview-images").html('')
-            for(let i = 0; i < products.product_images.length; i++) {
+            for(let i = 0; i < product.product_images.length; i++) {
               $(".edit-multiple-preview-images").append(`
                 <div class="col-3 mb-4 position-relative">
-                  <i class="bx bx-x position-absolute text-dark fa-lg delete-img-icon" data-id="${products.product_images[i].id}" style="right: 15px; cursor: pointer;"></i>
-                  <img src="/uploads/products/images/${products.product_images[i].image}" class="border" width="100%" alt="">
+                  <i class="bx bx-x position-absolute text-dark fa-lg delete-img-icon" data-id="${product.product_images[i].id}" style="right: 15px; cursor: pointer;"></i>
+                  <img src="/uploads/products/images/${product.product_images[i].image}" class="border" width="100%" alt="">
                 </div>
               `)            
             }
@@ -534,22 +537,19 @@
         })
       })
 
-      // $(".delete-achievement-data").on("click", function() {          
-      //     $.ajax({
-      //         type: "POST",
-      //         url: '/admin/about/achievement/detail',
-      //         data: {
-      //           "achievement_id": $(this).closest('.table-body').find('.achievement_id').val(),
-      //         },
-      //         dataType: "json",
-      //         success: function(response){
-      //           $("#delete-achievement-form").attr("action", `/admin/about/achievement/${response.achievement.id}`)
-      //           $("#delete-achievement-title").html(response.achievement.title_achievement_en)
-      //           $("#delete-achievement-count").html(response.achievement.count)
-      //         }
-      //     });
-      // })   
-    });
+      $(".delete-product-data").on("click", function() { 
+        const product_id = $(this).closest('.table-body').find('.product_id').val()     
+        $.ajax({
+          type: "GET",
+          url: `/admin/products/${product_id}`,
+          dataType: "json",
+          success: function({product}){            
+            console.log(product)
+            $("#delete_product_form").attr("action", `/admin/products/${product.id}`)
+          }
+        })
+      })
+    })
 
     previewImg("create-product-input", "create-product-preview-img")
     previewImg("edit-product-input", "edit-product-preview-img")

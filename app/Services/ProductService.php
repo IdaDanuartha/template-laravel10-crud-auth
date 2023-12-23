@@ -2,10 +2,8 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Models\ProductImage;
 use App\Repositories\ProductRepository;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
+use App\Utils\UploadFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -14,15 +12,18 @@ class ProductService {
   protected $productRepository;
   protected $productImageService;
   protected $productCategoryService;
+  protected $uploadFile;
 
   public function __construct(
     ProductRepository $productRepository, 
     ProductImageService $productImageService, 
-    ProductCategoryService $productCategoryService)
+    ProductCategoryService $productCategoryService,
+    UploadFile $uploadFile)
   {
     $this->productRepository = $productRepository;
     $this->productImageService = $productImageService;
     $this->productCategoryService = $productCategoryService;
+    $this->uploadFile = $uploadFile;
   }
 
   public function findAll($query)
@@ -43,10 +44,9 @@ class ProductService {
   {   
     DB::beginTransaction();     
     try {
-      if ($data["thumbnail_img"]) { 
-        $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
-        $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
-        $data['thumbnail_img'] = $thumbnail_img_name;
+      if ($data["thumbnail_img"]) {         
+        $filename = $this->uploadFile->uploadSingleFile($data['thumbnail_img'], "products/thumbnails");
+        $data['thumbnail_img'] = $filename;
       }     
 
       $product = $this->productRepository->store($data);
@@ -64,30 +64,24 @@ class ProductService {
     }    
   }
   
-  public function update($id, array $data, array $product_images)
+  public function update($id, array $data, array $product_images): bool
   {
     DB::beginTransaction();     
     try {
       $product = $this->productRepository->findById($id); 
       
       if (isset($data["thumbnail_img"])) { 
-        $path = "uploads/products/thumbnails/" . $product->thumbnail_img;      
+        $this->uploadFile->deleteExistFile("products/thumbnails/$product->thumbnail_img");
 
-        if(File::exists($path) ) {
-          File::delete($path);
-        }
-
-        $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
-        $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
-        $data['thumbnail_img'] = $thumbnail_img_name;
+        $filename = $this->uploadFile->uploadSingleFile($data['thumbnail_img'], 'products/thumbnails');
+        $data['thumbnail_img'] = $filename;
       }     
-
-      $this->productRepository->update($id, $data);
-      if(isset($product_images['images'])) $this->productImageService->update($product->id, $product_images);
-
+      
       DB::commit();
 
-      return $product;
+      if(isset($product_images['images'])) $this->productImageService->update($product->id, $product_images);
+
+      return $this->productRepository->update($id, $data);;
 
     } catch (\Exception $e) {
       DB::rollBack();
@@ -97,33 +91,29 @@ class ProductService {
     }    
   }
 
-  // public function delete($id): Product
-  // {
-  //   DB::beginTransaction();
-  //   try {
-  //     $product = $this->productRepository->findById($id);      
-  //     $product_images = $this->productImageService->findAll();
+  public function delete($id): bool
+  {
+    DB::beginTransaction();
+    try {      
+      $product = $this->productRepository->findById($id);      
+      $product_images = $this->productImageService->findAll($id);
 
-  //     $path = "uploads/products/thumbnails/$product->thumbnail_img";      
+      $this->uploadFile->deleteExistFile("products/thumbnails/$product->thumbnail_img");
 
-  //     if(File::exists($path) ) {
-  //       File::delete($path);
-  //     }      
-
-  //     foreach($product_images as $image) {        
-  //       if($image->product_id == $product->id) {
-  //         $this->productImageService->delete($image->id);
-  //       }
-  //     }
+      foreach($product_images as $image) {        
+        if($image->product_id == $product->id) {
+          $this->productImageService->delete($image->id);
+        }
+      }
       
-  //     DB::commit();           
+      DB::commit();
 
-  //     return $this->productRepository->delete($id);
-  //   } catch (\Exception $e) {
-  //     DB::rollBack();
-  //     Log::info($e->getMessage());
+      return $this->productRepository->delete($id);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
 
-  //     throw $e;
-  //   }
-  // }
+      throw $e;
+    }
+  }
 }

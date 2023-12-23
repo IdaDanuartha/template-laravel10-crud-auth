@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\ProductImage;
 use App\Repositories\ProductImageRepository;
+use App\Utils\UploadFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -10,15 +11,20 @@ use Illuminate\Support\Facades\Log;
 
 class ProductImageService {
   protected $productImageRepository;
+  protected $uploadFile;
 
-  public function __construct(ProductImageRepository $productImageRepository)
+  public function __construct(ProductImageRepository $productImageRepository, UploadFile $uploadFile)
   {
     $this->productImageRepository = $productImageRepository;
+    $this->uploadFile = $uploadFile;
   }
 
-  public function findAll()
+  public function findAll($product_id)
   {
-    return $this->productImageRepository->findAll();
+    return $this->productImageRepository
+                ->findAll()
+                ->where('product_id', $product_id)
+                ->get();
   }
 
   public function findById($id): ProductImage
@@ -31,11 +37,10 @@ class ProductImageService {
     DB::beginTransaction();     
     try {            
       foreach($product_images as $image) {
-        $product_image_name = date("Ymdhis") . "_" . $image->getClientOriginalName();                
-        $image->move(public_path("uploads/products/images"), $product_image_name);        
+        $filename = $this->uploadFile->uploadSingleFile($image, 'products/images');       
 
         $data = [
-          "image" => $product_image_name,
+          "image" => $filename,
           "product_id" => $product_id,
         ];
 
@@ -59,12 +64,7 @@ class ProductImageService {
             
       foreach($images as $image) {                      
           $image->delete();
-
-          $path = "uploads/products/images/$image->image";                
-          if(File::exists($path)) {
-              File::delete($path);
-          }
-
+          $this->uploadFile->deleteExistFile("products/images/$image->image");
       } 
 
       if ($product_images) {
@@ -86,11 +86,7 @@ class ProductImageService {
     try {      
       $product_images = $this->productImageRepository->findById($id);
       
-      $path = "uploads/products/images/$product_images->image";
-
-      if(File::exists($path) ) {
-        File::delete($path);
-      }
+      $this->uploadFile->deleteExistFile("products/images/$product_images->image");
       
       DB::commit();           
 
