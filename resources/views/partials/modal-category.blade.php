@@ -73,6 +73,7 @@
     <form class="modal-content" action="" id="edit_category_form" method="post">
       @csrf
       @method("PUT")
+      <input type="hidden" id="edit_category_id" name="category_id">
       <div class="modal-header">
         <h5 class="modal-title" id="editCategoryModalTitle">Edit Category</h5>
         <button
@@ -84,10 +85,10 @@
       <div class="modal-body">
         <div class="row">
           <div class="col mb-3">
-            <label for="edit_name" class="form-label">Category Name</label>
+            <label for="edit-name" class="form-label">Category Name</label>
             <input
               type="text"
-              id="edit_name"
+              id="edit-name"
               name="name"
               class="form-control"
               required

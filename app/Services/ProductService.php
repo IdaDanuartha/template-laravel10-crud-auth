@@ -26,13 +26,13 @@ class ProductService {
     $this->uploadFile = $uploadFile;
   }
 
-  public function findAll($query)
+  public function findAll($query = "")
   {        
     return $this->productRepository
                 ->findAll()
                 ->where('title', 'like', "%$query%")
                 ->latest()
-                ->paginate(5);
+                ->paginate(10);
   }
 
   public function findById($id, $relations = []): Product

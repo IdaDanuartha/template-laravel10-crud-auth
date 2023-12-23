@@ -5,7 +5,7 @@
   <div class="d-flex justify-content-between align-items-center">
     <h5 class="card-header">Categories</h5>
     <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
-    data-bs-target="#createProductModal">Create New Product</button>
+    data-bs-target="#createCategoryModal">Create New Category</button>
   </div>
   <div class="table-responsive text-nowrap">
     <table class="table">

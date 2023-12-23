@@ -25,8 +25,8 @@ class BaseRepository implements RepositoryInterface {
   }
 
   public function store(array $data): Model
-  {
-      return $this->model->create($data);
+  {    
+    return $this->model->create($data);
   }
 
   public function update($id, array $data): bool
