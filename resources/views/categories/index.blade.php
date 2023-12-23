@@ -2,7 +2,11 @@
 
 @section('main')
 <div class="card">
-  <h5 class="card-header">Products</h5>
+  <div class="d-flex justify-content-between align-items-center">
+    <h5 class="card-header">Products</h5>
+    <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal"
+    data-bs-target="#createProductModal">Create New Product</button>
+  </div>
   <div class="table-responsive text-nowrap">
     <table class="table">
       <thead>
@@ -15,59 +19,53 @@
         </tr>
       </thead>
       <tbody class="table-border-bottom-0">
-        <tr>
-          <td>
-            <i class="bx bxl-angular bx-sm text-danger me-3"></i>
-            <span class="fw-medium">Angular Project</span>
-          </td>
-          <td>Albert Cook</td>
-          <td>
-            <ul class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-              <li
-                data-bs-toggle="tooltip"
-                data-popup="tooltip-custom"
-                data-bs-placement="top"
-                class="avatar avatar-xs pull-up"
-                title="Lilian Fuller">
-                <img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
-              </li>
-              <li
-                data-bs-toggle="tooltip"
-                data-popup="tooltip-custom"
-                data-bs-placement="top"
-                class="avatar avatar-xs pull-up"
-                title="Sophia Wilkerson">
-                <img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" />
-              </li>
-              <li
-                data-bs-toggle="tooltip"
-                data-popup="tooltip-custom"
-                data-bs-placement="top"
-                class="avatar avatar-xs pull-up"
-                title="Christina Parker">
-                <img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" />
-              </li>
-            </ul>
-          </td>
-          <td><span class="badge bg-label-primary me-1">Active</span></td>
-          <td>
-            <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="bx bx-dots-vertical-rounded"></i>
-              </button>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="javascript:void(0);"
-                  ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                >
-                <a class="dropdown-item" href="javascript:void(0);"
-                  ><i class="bx bx-trash me-1"></i> Delete</a
-                >
+        @forelse ($products as $item)        
+          <tr class="table-body">
+            <input type="hidden" class="product_id" value="{{ $item->id }}">
+            <td>              
+              <span class="fw-medium">{{ $item->title }}</span>
+            </td>
+            <td>{{ $item->product_category->name }}</td>
+            <td>Rp. @rupiah($item->price)</td>
+            <td>{{ $item->stock }}</td>            
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item detail-product-data" href="#" data-bs-toggle="modal"
+                  data-bs-target="#detailProductModal"
+                    ><i class="bx bx-file me-1"></i> Detail</a
+                  >
+                  <a class="dropdown-item edit-product-data" data-bs-toggle="modal"
+                  data-bs-target="#editProductModal"
+                    ><i class="bx bx-edit-alt me-1"></i> Edit</a
+                  >
+                  <a class="dropdown-item delete-product-data" href="#" data-bs-toggle="modal"
+                  data-bs-target="#deleteProductModal"
+                    ><i class="bx bx-trash me-1"></i> Delete</a
+                  >
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="5" class="text-center">Product not found</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
+    <div class="mx-3">
+      {{ $products->links() }}
+    </div>
   </div>
 </div>
+
+@include('partials.modal-category')
 @endsection
+
+@push('js')
+<script src="{{ asset('assets/js/custom/categories.js') }}"></script>
+@endpush

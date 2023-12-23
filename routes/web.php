@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/admin/dashboard');
 
 Route::prefix('admin')->group(function() {
     Route::get('dashboard', DashboardController::class)->name("dashboard.index");
     Route::resource('products', ProductController::class);
     Route::resource('categories', ProductCategoryController::class);
+});
+
+Route::fallback(function() {
+    return view('errors.404');
 });
