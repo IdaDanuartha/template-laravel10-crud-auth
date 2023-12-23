@@ -57,6 +57,9 @@
         @endforelse
       </tbody>
     </table>
+    <div class="mx-3">
+      {{ $products->links() }}
+    </div>
   </div>
 </div>
 

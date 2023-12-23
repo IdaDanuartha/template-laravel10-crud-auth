@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -26,5 +27,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('rupiah', function ($num) {
             return "<?php echo number_format($num, 0 , ',', '.'); ?>";
         });
+
+        Paginator::useBootstrapFive();
     }
 }

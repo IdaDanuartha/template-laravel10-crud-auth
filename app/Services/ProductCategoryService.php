@@ -15,7 +15,7 @@ class ProductCategoryService {
 
   public function findAll(): Collection
   {
-    return $this->productCategoryRepository->findAll();
+    return $this->productCategoryRepository->findAll()->get();
   }
 
   public function findById($id): ProductCategory

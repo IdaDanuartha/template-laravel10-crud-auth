@@ -22,7 +22,7 @@ class ProductController extends Controller
 
     public function index(string $query = "")
     {            
-        $products = $this->productService->findAll("product");        
+        $products = $this->productService->findAll();
         $categories = $this->productCategoryService->findAll();
         
         return view('products.index', compact('products', 'categories'));

@@ -25,15 +25,9 @@ class ProductService {
     $this->productCategoryService = $productCategoryService;
   }
 
-  public function findAll(
-    $search = null,
-    $relations = [], 
-    $conditions = [], 
-    $orderBy = ["created_at" => "desc"],
-    $paginate = null
-  ): Collection
+  public function findAll()
   {
-    return $this->productRepository->findAll($search, $relations, $conditions, $orderBy, $paginate);
+    return $this->productRepository->findAll()->latest()->paginate(5);
   }
 
   public function findById($id, $relations = []): Product
