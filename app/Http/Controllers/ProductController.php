@@ -25,7 +25,7 @@ class ProductController extends Controller
         $products = $this->productService->findAll($request["query"]);
         $categories = $this->productCategoryService->findAll();
         
-        return view('products.index', compact('products', 'categories'));
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function store(StoreProductRequest $request)
@@ -40,7 +40,7 @@ class ProductController extends Controller
     }
 
     public function show($id)
-    {        
+    {                
         return response()->json([
             "product" => $this->productService->findById($id, ["product_category", "product_images"]),
             "categories" => $this->productCategoryService->findAll()

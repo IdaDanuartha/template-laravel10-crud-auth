@@ -22,7 +22,7 @@ class ProductCategoryController extends Controller
     {                                   
         $categories = $this->productCategoryService->findAll($request["query"]);
         
-        return view('categories.index', compact('categories'));
+        return view('admin.categories.index', compact('categories'));
     }
 
     public function store(StoreCategoryRequest $request)

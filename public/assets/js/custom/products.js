@@ -7,6 +7,10 @@ $(document).ready(function() {
     dropdownParent: $("#createProductModal")
   });
 
+  $('.product-category-select2').select2({
+    dropdownParent: $("#editProductModal")
+  });
+
   $(".detail-product-data").on("click", function() {          
     $.ajax({
         type: "GET",
@@ -49,7 +53,7 @@ $(document).ready(function() {
         $("#edit_stock").val(product.stock)
         editor2.setHTMLCode(product.description)
         
-        categories.forEach(category => {
+        categories.data.forEach(category => {
           if(category.id == product.product_category.id) {
             $("#edit_category_product").append(`
               <option value="${category.id}" selected>
@@ -66,7 +70,7 @@ $(document).ready(function() {
         });
                         
         $(".edit-multiple-preview-images").html('')
-        for(let i = 0; i < product.product_images.length; i++) {
+        for(let i = 0; i < product.product_images.length; i++) {          
           $(".edit-multiple-preview-images").append(`
             <div class="col-3 mb-4 position-relative">
               <i class="bx bx-x position-absolute text-dark fa-lg delete-img-icon" data-id="${product.product_images[i].id}" style="right: 15px; cursor: pointer;"></i>

@@ -30,9 +30,12 @@ class ProductService {
   {        
     return $this->productRepository
                 ->findAll()
-                ->where('title', 'like', "%$query%")
-                ->latest()
-                ->paginate(10);
+                ->when($query, function($q) use($query) {
+                  $q->where('title', 'LIKE', "%$query%")
+                  ->orWhereHas('product_category', function ($q) use ($query) {
+                    $q->where('name', 'like', '%' . $query . '%');
+                  });
+                })->latest()->paginate(10);
   }
 
   public function findById($id, $relations = []): Product
