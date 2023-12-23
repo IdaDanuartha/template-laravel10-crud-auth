@@ -18,10 +18,10 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody class="table-border-bottom-0 table-body">
-        @foreach ($products as $item)
-          <input type="hidden" class="product_id" value="{{ $item->id }}">
-          <tr>
+      <tbody class="table-border-bottom-0">
+        @forelse ($products as $item)        
+          <tr class="table-body">
+            <input type="hidden" class="product_id" value="{{ $item->id }}">
             <td>              
               <span class="fw-medium">{{ $item->title }}</span>
             </td>
@@ -50,7 +50,11 @@
               </div>
             </td>
           </tr>
-        @endforeach
+        @empty
+          <tr>
+            <td colspan="5" class="text-center">Product not found</td>
+          </tr>
+        @endforelse
       </tbody>
     </table>
   </div>
@@ -448,8 +452,7 @@
             type: "GET",
             url: `/admin/products/${$(this).closest('.table-body').find('.product_id').val()}`,              
             dataType: "json",
-            success: function({products}){
-              console.log(products)
+            success: function({products, categories}){
               $("#detail-thumbnail").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
               $("#detail-title").val(products.title)
               $("#detail-category-product").val(products.product_category.name)

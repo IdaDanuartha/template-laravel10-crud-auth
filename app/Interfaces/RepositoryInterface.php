@@ -4,9 +4,15 @@ namespace App\Interfaces;
 
 interface RepositoryInterface 
 {
-  public function findAll();
-  public function findById($id);
+  public function findAll(
+    string $search,
+    array $relations, 
+    array $conditions, 
+    array $orderBy,
+    int $paginate
+  );
+  public function findById(int $id, array $relations = []);
   public function store(array $data);
-  public function update($id, array $newData);
-  public function delete($id);  
+  public function update(int $id, array $newData);
+  public function delete(int $id);  
 }

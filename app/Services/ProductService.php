@@ -25,17 +25,20 @@ class ProductService {
     $this->productCategoryService = $productCategoryService;
   }
 
-  public function findAll(): Collection
+  public function findAll(
+    $search = null,
+    $relations = [], 
+    $conditions = [], 
+    $orderBy = ["created_at" => "desc"],
+    $paginate = null
+  ): Collection
   {
-    return $this->productRepository->findAll();
+    return $this->productRepository->findAll($search, $relations, $conditions, $orderBy, $paginate);
   }
 
-  public function findById($id): JsonResponse
+  public function findById($id, $relations = []): Product
   {
-    return response()->json([
-      "products" => $this->productRepository->findById($id),
-      "categories" => $this->productCategoryService->findAll(),
-    ]);
+    return $this->productRepository->findById($id, $relations);
   }
 
   public function store(array $data, array $product_images): Product
@@ -63,66 +66,66 @@ class ProductService {
     }    
   }
   
-  public function update($id, array $data, array $product_images): Product
-  {
-    DB::beginTransaction(); 
-    try {
-      $product = $this->productRepository->findById($id); 
+  // public function update($id, array $data, array $product_images): Product
+  // {
+  //   DB::beginTransaction(); 
+  //   try {
+  //     $product = $this->productRepository->findById($id); 
       
-      if ($data["thumbnail_img"]) { 
-        $path = "uploads/products/thumbnails/" + $product->thumbnail_img;      
+  //     if ($data["thumbnail_img"]) { 
+  //       $path = "uploads/products/thumbnails/" + $product->thumbnail_img;      
 
-        if(File::exists($path) ) {
-          File::delete($path);
-        }
+  //       if(File::exists($path) ) {
+  //         File::delete($path);
+  //       }
 
-        $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
-        $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
-        $data['thumbnail_img'] = $thumbnail_img_name;
-      }     
+  //       $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
+  //       $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
+  //       $data['thumbnail_img'] = $thumbnail_img_name;
+  //     }     
 
-      $product = $this->productRepository->update($id, $data);
-      $this->productImageService->update($product->id, $product_images["images"]);
+  //     $product = $this->productRepository->update($id, $data);
+  //     $this->productImageService->update($product->id, $product_images["images"]);
 
-      DB::commit();
+  //     DB::commit();
 
-      return $product;
+  //     return $product;
 
-    } catch (\Exception $e) {
-      DB::rollBack();
-      Log::info($e->getMessage());
+  //   } catch (\Exception $e) {
+  //     DB::rollBack();
+  //     Log::info($e->getMessage());
       
-      throw $e;
-    }    
-  }
+  //     throw $e;
+  //   }    
+  // }
 
-  public function delete($id): Product
-  {
-    DB::beginTransaction();
-    try {
-      $product = $this->productRepository->findById($id);      
-      $product_images = $this->productImageService->findAll();
+  // public function delete($id): Product
+  // {
+  //   DB::beginTransaction();
+  //   try {
+  //     $product = $this->productRepository->findById($id);      
+  //     $product_images = $this->productImageService->findAll();
 
-      $path = "uploads/products/thumbnails/$product->thumbnail_img";      
+  //     $path = "uploads/products/thumbnails/$product->thumbnail_img";      
 
-      if(File::exists($path) ) {
-        File::delete($path);
-      }      
+  //     if(File::exists($path) ) {
+  //       File::delete($path);
+  //     }      
 
-      foreach($product_images as $image) {        
-        if($image->product_id == $product->id) {
-          $this->productImageService->delete($image->id);
-        }
-      }
+  //     foreach($product_images as $image) {        
+  //       if($image->product_id == $product->id) {
+  //         $this->productImageService->delete($image->id);
+  //       }
+  //     }
       
-      DB::commit();           
+  //     DB::commit();           
 
-      return $this->productRepository->delete($id);
-    } catch (\Exception $e) {
-      DB::rollBack();
-      Log::info($e->getMessage());
+  //     return $this->productRepository->delete($id);
+  //   } catch (\Exception $e) {
+  //     DB::rollBack();
+  //     Log::info($e->getMessage());
 
-      throw $e;
-    }
-  }
+  //     throw $e;
+  //   }
+  // }
 }

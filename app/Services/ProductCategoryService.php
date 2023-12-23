@@ -28,12 +28,12 @@ class ProductCategoryService {
     return $this->productCategoryRepository->store($data);
   }
   
-  public function update($id, $newData): ProductCategory
+  public function update($id, $newData): bool
   {
     return $this->productCategoryRepository->update($id, $newData);
   }
 
-  public function delete($id): ProductCategory
+  public function delete($id): bool
   {
     return $this->productCategoryRepository->delete($id);    
   }

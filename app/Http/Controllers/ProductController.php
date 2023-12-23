@@ -20,48 +20,51 @@ class ProductController extends Controller
       $this->productCategoryService = $productCategoryService;
     }
 
-    public function index()
-    {
-        $products = $this->productService->findAll();
+    public function index(string $query = "")
+    {            
+        $products = $this->productService->findAll("product");        
         $categories = $this->productCategoryService->findAll();
         
         return view('products.index', compact('products', 'categories'));
     }
 
     public function store(StoreProductRequest $request)
-    {
+    {        
         try {                        
             $this->productService->store($request->except(['images']), $request->only('images'));
 
             return redirect()->route('products.index')->with('success', 'Product created successfully');
         } catch (\Exception $e) {
-            return redirect()->route('products.index')->with('error', $e->getMessage());
+            return redirect()->route('products.index')->with('error', 'Failed to create product');
         }
     }
 
     public function show($id)
     {        
-        return $this->productService->findById($id);
+        return response()->json([
+            "products" => $this->productService->findById($id, ["product_category", "product_images"]),
+            "categories" => $this->productCategoryService->findAll()
+        ]);
     }
 
-    public function update(UpdateProductRequest $request, $id)
-    {
-        try {                        
-            $this->productService->update($id, $request->except(['images']), $request->only('images'));
+    // public function update(UpdateProductRequest $request, $id)
+    // {
+    //     try {                        
+    //         $this->productService->update($id, $request->except(['images']), $request->only('images'));
 
-            return redirect()->route('products.index')->with('success', 'Product updated successfully');
-        } catch (\Exception $e) {
-            return redirect()->route('products.index')->with('error', $e->getMessage());
-        }
-    }
+    //         return redirect()->route('products.index')->with('success', 'Product updated successfully');
+    //     } catch (\Exception $e) {
+    //         return redirect()->route('products.index')->with('error', Failed to update product);
+    //     }
+    // }
 
-    public function destroy($id)
-    {
-        try {
-            $this->productService->delete($id);
-            return redirect()->route('products.index')->with('success', 'Product deleted successfully');
-        } catch (\Exception $e) {
-            return redirect()->route('products.index')->with('error', $e->getMessage());
-        }
-    }
+    // public function destroy($id)
+    // {
+    //     try {
+    //         $this->productService->delete($id);
+    //         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+    //     } catch (\Exception $e) {
+    //         return redirect()->route('products.index')->with('error', Failed to delete product);
+    //     }
+    // }
 }
