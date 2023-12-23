@@ -25,9 +25,13 @@ class ProductService {
     $this->productCategoryService = $productCategoryService;
   }
 
-  public function findAll()
-  {
-    return $this->productRepository->findAll()->latest()->paginate(5);
+  public function findAll($query)
+  {        
+    return $this->productRepository
+                ->findAll()
+                ->where('title', 'like', "%$query%")
+                ->latest()
+                ->paginate(5);
   }
 
   public function findById($id, $relations = []): Product
@@ -37,7 +41,7 @@ class ProductService {
 
   public function store(array $data, array $product_images): Product
   {   
-    DB::beginTransaction(); 
+    DB::beginTransaction();     
     try {
       if ($data["thumbnail_img"]) { 
         $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
@@ -60,38 +64,38 @@ class ProductService {
     }    
   }
   
-  // public function update($id, array $data, array $product_images): Product
-  // {
-  //   DB::beginTransaction(); 
-  //   try {
-  //     $product = $this->productRepository->findById($id); 
+  public function update($id, array $data, array $product_images)
+  {
+    DB::beginTransaction();     
+    try {
+      $product = $this->productRepository->findById($id); 
       
-  //     if ($data["thumbnail_img"]) { 
-  //       $path = "uploads/products/thumbnails/" + $product->thumbnail_img;      
+      if (isset($data["thumbnail_img"])) { 
+        $path = "uploads/products/thumbnails/" . $product->thumbnail_img;      
 
-  //       if(File::exists($path) ) {
-  //         File::delete($path);
-  //       }
+        if(File::exists($path) ) {
+          File::delete($path);
+        }
 
-  //       $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
-  //       $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
-  //       $data['thumbnail_img'] = $thumbnail_img_name;
-  //     }     
+        $thumbnail_img_name = date("Ymdhis") . "_" . $data["thumbnail_img"]->getClientOriginalName();                
+        $data["thumbnail_img"]->move(public_path("uploads/products/thumbnails"), $thumbnail_img_name);
+        $data['thumbnail_img'] = $thumbnail_img_name;
+      }     
 
-  //     $product = $this->productRepository->update($id, $data);
-  //     $this->productImageService->update($product->id, $product_images["images"]);
+      $this->productRepository->update($id, $data);
+      if(isset($product_images['images'])) $this->productImageService->update($product->id, $product_images);
 
-  //     DB::commit();
+      DB::commit();
 
-  //     return $product;
+      return $product;
 
-  //   } catch (\Exception $e) {
-  //     DB::rollBack();
-  //     Log::info($e->getMessage());
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
       
-  //     throw $e;
-  //   }    
-  // }
+      throw $e;
+    }    
+  }
 
   // public function delete($id): Product
   // {

@@ -286,7 +286,8 @@
     <form class="modal-content" action="" id="edit_product_form" method="post" enctype="multipart/form-data">
       @csrf
       @method("PUT")
-      <input type="hidden" class="image_deleted">
+      <input type="hidden" id="edit_product_id" name="product_id">
+      <input type="hidden" class="image_deleted" name="image_deleted">
       <div class="modal-header">
         <h5 class="modal-title" id="editProductModalTitle">Edit Product</h5>
         <button
@@ -300,12 +301,13 @@
           <div class="col mb-3">
             <label for="edit_thumbnail" class="form-label">Thumbnail</label>
             <label for="edit_thumbnail" class="d-block mb-3">
-              <img id="edit_thumbnail" src="{{ asset('assets/img/upload-image.jpg') }}" class="create-product-preview-img border" width="300" alt="">
+              <img id="edit_thumbnail_img" src="{{ asset('assets/img/upload-image.jpg') }}" class="edit-product-preview-img border" width="300" alt="">
             </label>
             <input
-              type="file"              
+              type="file"  
+              id="edit_thumbnail"            
               name="thumbnail_img"
-              class="form-control create-product-input"
+              class="form-control edit-product-input"
               />
             @error('thumbnail_img')
               <div class="text-danger mt-1">{{ $message }}</div>
@@ -483,9 +485,9 @@
           dataType: "json",
           success: function({products, categories}){            
             $("#edit_product_form").attr("action", `/admin/products/${product_id}`)
-            $("#edit_thumbnail").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
-            $("#edit_title").val(products.title)
-            // $("#edit_category_product").val(products.product_category.name)
+            $("#edit_thumbnail_img").attr("src", `/uploads/products/thumbnails/${products.thumbnail_img}`)
+            $("#edit_product_id").val(products.id)
+            $("#edit_title").val(products.title)            
             $("#edit_price").val(products.price)
             $("#edit_stock").val(products.stock)
             editor2.setHTMLCode(products.description)
@@ -550,6 +552,7 @@
     });
 
     previewImg("create-product-input", "create-product-preview-img")
+    previewImg("edit-product-input", "edit-product-preview-img")
     previewMultipleImages("create-product-multiple-images", "multiple-preview-images")
     previewMultipleImages("edit-product-multiple-images", "edit-multiple-preview-images-new")
     

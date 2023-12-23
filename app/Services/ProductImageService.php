@@ -16,7 +16,7 @@ class ProductImageService {
     $this->productImageRepository = $productImageRepository;
   }
 
-  public function findAll(): Collection
+  public function findAll()
   {
     return $this->productImageRepository->findAll();
   }
@@ -28,7 +28,7 @@ class ProductImageService {
 
   public function store(int $product_id, array $product_images): void
   {   
-    DB::beginTransaction(); 
+    DB::beginTransaction();     
     try {            
       foreach($product_images as $image) {
         $product_image_name = date("Ymdhis") . "_" . $image->getClientOriginalName();                
@@ -51,58 +51,55 @@ class ProductImageService {
     }    
   }
   
-  // public function update(int $product_id, array $product_images): bool
-  // {
-  //   DB::beginTransaction();
-  //   try {            
-  //     // $product_images = $this->productImageRepository->findById($id);
+  public function update(int $product_id, array $product_images): void
+  {
+    DB::beginTransaction();
+    try {            
+      $images = ProductImage::where('product_id', $product_id)->whereIn("id", explode(",", $product_images['image_deleted']))->get();            
+            
+      foreach($images as $image) {                      
+          $image->delete();
+
+          $path = "uploads/products/images/$image->image";                
+          if(File::exists($path)) {
+              File::delete($path);
+          }
+
+      } 
+
+      if ($product_images) {
+        $this->store($product_id, $product_images["images"]);
+      }
+
+      DB::commit();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
       
-  //     // $path = "uploads/products/images/$product_images->image";
+      throw $e;
+    } 
+  }
 
-  //     // if(File::exists($path) ) {
-  //     //   File::delete($path);
-  //     // }
-  //     foreach($product_images as $image) {
-  //       $product_image_name = date("Ymdhis") . "_" . $image->getClientOriginalName();                
-  //       $image->move(public_path("uploads/products/images"), $product_image_name);        
-
-  //       $data = [
-  //         "image" => $product_image_name,
-  //         "product_id" => $product_id,
-  //       ];
-
-  //       $this->productImageRepository->update($data);
-  //     }
-
-  //     DB::commit();
-  //   } catch (\Exception $e) {
-  //     DB::rollBack();
-  //     Log::info($e->getMessage());
+  public function delete($id): bool
+  {
+    DB::beginTransaction();
+    try {      
+      $product_images = $this->productImageRepository->findById($id);
       
-  //     throw $e;
-  //   } 
-  // }
+      $path = "uploads/products/images/$product_images->image";
 
-  // public function delete($id): bool
-  // {
-  //   DB::beginTransaction();
-  //   try {      
-  //     $product_images = $this->productImageRepository->findById($id);
+      if(File::exists($path) ) {
+        File::delete($path);
+      }
       
-  //     $path = "uploads/products/images/$product_images->image";
+      DB::commit();           
 
-  //     if(File::exists($path) ) {
-  //       File::delete($path);
-  //     }
-      
-  //     DB::commit();           
+      return $this->productImageRepository->delete($id);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      Log::info($e->getMessage());
 
-  //     return $this->productImageRepository->delete($id);
-  //   } catch (\Exception $e) {
-  //     DB::rollBack();
-  //     Log::info($e->getMessage());
-
-  //     throw $e;
-  //   }       
-  // }
+      throw $e;
+    }       
+  }
 }

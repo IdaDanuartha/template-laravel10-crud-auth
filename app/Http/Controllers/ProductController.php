@@ -20,9 +20,9 @@ class ProductController extends Controller
       $this->productCategoryService = $productCategoryService;
     }
 
-    public function index(string $query = "")
-    {            
-        $products = $this->productService->findAll();
+    public function index(Request $request)
+    {                           
+        $products = $this->productService->findAll($request["query"]);
         $categories = $this->productCategoryService->findAll();
         
         return view('products.index', compact('products', 'categories'));
@@ -47,16 +47,16 @@ class ProductController extends Controller
         ]);
     }
 
-    // public function update(UpdateProductRequest $request, $id)
-    // {
-    //     try {                        
-    //         $this->productService->update($id, $request->except(['images']), $request->only('images'));
+    public function update(UpdateProductRequest $request, $id)
+    {
+        try {                     
+            $this->productService->update($id, $request->except(['product_id', 'images', 'image_deleted']), $request->only('images', 'image_deleted'));
 
-    //         return redirect()->route('products.index')->with('success', 'Product updated successfully');
-    //     } catch (\Exception $e) {
-    //         return redirect()->route('products.index')->with('error', Failed to update product);
-    //     }
-    // }
+            return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', 'Failed to update product');
+        }
+    }
 
     // public function destroy($id)
     // {
