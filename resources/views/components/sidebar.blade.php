@@ -104,13 +104,18 @@
                 <a href="#" class="menu-link">
                     <div>Application</div>
                 </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <div>Logout</div>
-                </a>
-            </li>            
+            </li>          
         </ul>
-        </li>              
+        </li>  
+        
+        <!-- Logout -->
+        <li class="menu-item">
+            <form action="{{ route('logout') }}" method="POST" class="ms-4 mt-2 me-3">
+                @csrf                
+                <button type="submit" class="btn btn-primary text-white" style="width: 100%">
+                    Logout
+                </button>                
+            </form>  
+        </li>
     </ul>
 </aside>

@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('title') Dashboard Analytics Page @endsection
 
 @section('main')
 <div class="row">

@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('title') Dashboard Products Page @endsection
 
 @section('main')
 <div class="card">

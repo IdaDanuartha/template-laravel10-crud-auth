@@ -13,7 +13,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>@yield('title') | Dashboard Admin</title>
 
     <meta name="description" content="" />
 
@@ -49,9 +49,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/richtexteditor/rte_theme_default.css') }}">
 
     <!-- Helpers -->
-    <script src="/assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/assets/vendor/js/helpers.js"></script>    
     <script src="/assets/js/config.js"></script>
   </head>
 
