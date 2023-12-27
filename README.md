@@ -5,7 +5,7 @@ Untuk standarisasi kode pada laravel 10, kita menggunakan Service Repository Pat
 
 ## Contoh Kode CRUD Sederhana
 
-* #### #### Model Product
+* #### Model Product
 
 ```bash
 <?php
