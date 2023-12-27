@@ -28,7 +28,7 @@ class StoreProductRequest extends FormRequest
             'stock' => 'required|numeric',
             'description' => 'required|min:15',
             'thumbnail_img' => 'required|file|image|mimes:png,jpg,jpeg,gif,webp,svg|max:2048',
-            'images.*.*' => 'required|file|image|mimes:png,jpg,jpeg,gif,webp,svg|max:2048',
+            'images.*' => 'required|file|image|mimes:png,jpg,jpeg,gif,webp,svg|max:2048',
         ];
     }
 }
