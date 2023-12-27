@@ -12,7 +12,7 @@ class AuthService
   public function login($credentials)
   {
     try {
-      if(Auth::attempt($credentials)) return true;
+      return Auth::attempt($credentials);
     } catch (\Exception $e) {
       Log::info($e->getMessage());
       throw $e;

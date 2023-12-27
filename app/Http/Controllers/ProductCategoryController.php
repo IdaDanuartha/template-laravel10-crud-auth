@@ -28,7 +28,7 @@ class ProductCategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {        
         try {                        
-            $this->productCategoryService->store($request->all());
+            $this->productCategoryService->store($request->validated());
 
             return redirect()->route('categories.index')->with('success', 'Category created successfully');
         } catch (\Exception $e) {            

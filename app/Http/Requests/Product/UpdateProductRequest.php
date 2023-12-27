@@ -31,4 +31,12 @@ class UpdateProductRequest extends FormRequest
             'images.*' => 'nullable|file|image|mimes:png,jpg,jpeg,gif,webp,svg|max:2048',
         ];
     }
+
+    public function attributes()
+    {
+        return [
+            'product_category_id' => 'product_category',
+            'thumbnail_img' => 'thumbnail_image'
+        ]; 
+    }
 }
